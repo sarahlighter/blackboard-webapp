@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import com.csye6225.spring2020.courseservice.datamodel.Lecture;
 import com.csye6225.spring2020.courseservice.service.LecturesService;
 
-@Path("Lectures")
+@Path("lectures")
 public class LecturesResource {
 	LecturesService lectService = new LecturesService();
 

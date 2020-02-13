@@ -14,16 +14,16 @@ public class ProgramsService {
 
 	public List<Program> getAllPrograms(){
 		ArrayList<Program> allPrograms = new ArrayList<>();
-		for(Program c:pgm_Map .values()) {
-			allPrograms.add(c);
+		for(Program p:pgm_Map .values()) {
+			allPrograms.add(p);
 		}
 		return allPrograms;
 	}
- 	public Program getProgram(String ProgramId) {
-		Program cors=pgm_Map .get(ProgramId);
+ 	public Program getProgram(String ProgramName) {
+		Program program=pgm_Map .get(ProgramName);
 		System.out.println("Item retrieved:");
-		System.out.println(cors.toString());
-		return cors;
+		System.out.println(program.toString());
+		return program;
 	}
 	public Program addProgram(Program pgm) {
 		pgm_Map .put(pgm.getProgramName(),pgm);

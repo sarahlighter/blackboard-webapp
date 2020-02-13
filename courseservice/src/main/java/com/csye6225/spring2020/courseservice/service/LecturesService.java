@@ -32,6 +32,7 @@ public class LecturesService {
 		lect_Map.put(id, lect);
 		return lect;
 	}
+	
 	// Getting One Lecture
 	public Lecture getLecture(String lectId) {
 		 //Simple HashKey Load

@@ -10,7 +10,7 @@ public class Student {
 	private String joiningDate;
 	private String image;
 	private Set<String> coursesEnrolled;
-	private String programId;
+	private String programName;
 
 	public Student() {
 	}
@@ -71,19 +71,19 @@ public class Student {
 		this.coursesEnrolled = coursesEnrolled;
 	}
 
-	public String getProgramId() {
-		return programId;
+	public String getProgramName() {
+		return programName;
 	}
 
-	public void setProgramId(String programId) {
-		this.programId = programId;
+	public void setProgramName(String programName) {
+		this.programName = programName;
 	}
 
 	@Override
 	public String toString() {
 		return "Student [id=" + id + ", StudentId=" + StudentId + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", joiningDate=" + joiningDate + ", image=" + image + ", coursesEnrolled=" + coursesEnrolled
-				+ ", programId=" + programId + "]";
+				+ ", ProgramName=" + programName + "]";
 	}
 
 }
