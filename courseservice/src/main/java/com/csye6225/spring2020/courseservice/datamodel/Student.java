@@ -3,17 +3,17 @@ package com.csye6225.spring2020.courseservice.datamodel;
 import java.util.Set;
 
 public class Student {
-	 private String id;
-	 private String StudentId;
-	 private String firstName;
-	 private String lastName;
-	 private String joiningDate;
-     private String image;
-     private Set<String> coursesEnrolled;
-     private String programId;
-     
-     public Student() {
-     }
+	private String id;
+	private String StudentId;
+	private String firstName;
+	private String lastName;
+	private String joiningDate;
+	private String image;
+	private Set<String> coursesEnrolled;
+	private String programId;
+
+	public Student() {
+	}
 
 	public String getId() {
 		return id;
@@ -78,6 +78,12 @@ public class Student {
 	public void setProgramId(String programId) {
 		this.programId = programId;
 	}
-     
-     
+
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", StudentId=" + StudentId + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", joiningDate=" + joiningDate + ", image=" + image + ", coursesEnrolled=" + coursesEnrolled
+				+ ", programId=" + programId + "]";
+	}
+
 }

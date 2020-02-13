@@ -26,53 +26,53 @@ public class ProfessorsResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Professor> getProfessors(@QueryParam("department") String depart) {		
-		
+
 		if (depart == null) {
 			return profService.getAllProfessors();
 		}
 		return profService.getProfessorsByDepartment(depart);
-		
+
 	}
-	
+
 	// ... webapi/professor/1 
 	@GET
-	@Path("/{professorId}")
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Professor getProfessor(@PathParam("professorId") long profId) {
+	public Professor getProfessor(@PathParam("id") String profId) {
 		System.out.println("Professor Resource: Looking for: " + profId);
 		return profService.getProfessor(profId);
 	}
-	
+
 	@DELETE
-	@Path("/{professorId}")
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Professor deleteProfessor(@PathParam("professorId") long profId) {
+	public Professor deleteProfessor(@PathParam("id") String profId) {
 		return profService.deleteProfessor(profId);
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Professor addProfessor(Professor prof) {
-		 	if (prof == null)
-	        {
-	            return null;
-	        }
-			prof.setProfessorId(prof.getFirstName()+prof.getLastName());
-			prof.setJoiningDate(new Date().toString());
-			return profService.addProfessor(prof);
+		if (prof == null)
+		{
+			return null;
+		}
+		prof.setProfessorId(prof.getFirstName()+prof.getLastName());
+		prof.setJoiningDate(new Date().toString());
+		return profService.addProfessor(prof);
 	}
-	
+
 	@PUT
-	@Path("/{professorId}")
+	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Professor updateProfessor(@PathParam("professorId") long profId, 
+	public Professor updateProfessor(@PathParam("id") String profId, 
 			Professor prof) {
 		return profService.updateProfessorInformation(profId, prof);
 	}
-	
+
 	public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
 		profService.addProfessor(firstName, lastName, department, joiningDate);
 	}
- }
+}

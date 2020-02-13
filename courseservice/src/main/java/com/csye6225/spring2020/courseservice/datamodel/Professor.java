@@ -13,16 +13,16 @@ import java.util.Date;
 
 public class Professor {
 	private String id;
+	private String professorId;
 	private String firstName;
 	private String lastName;
 	private String department;
-	private String professorId;
 	private String joiningDate;
-	
+
 	public Professor() {
-		
+
 	}
-	
+
 	public Professor(String professorId, String firstName, 
 			String lastName, String department, String joiningDate) {
 		//this.setId(professorId);
@@ -32,14 +32,14 @@ public class Professor {
 		this.department = department;
 		this.joiningDate = joiningDate;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-	
+
 	public String getDepartment() {
 		return department;
 	}
@@ -53,18 +53,12 @@ public class Professor {
 	public void setProfessorId(String professorId) {
 		this.professorId = professorId;
 	}
-	
+
 	public String getJoiningDate() {
 		return joiningDate;
 	}
 	public void setJoiningDate(String joiningDate) {
 		this.joiningDate = joiningDate;
-	}
-	
-	@Override
-	public String toString() { 
-		return "ProfId=" + getProfessorId() + ", firstName=" + getFirstName()
-				+ ", department=" + getDepartment() + ", joiningDate=" + getJoiningDate();
 	}
 
 	public String getId() {
@@ -80,4 +74,11 @@ public class Professor {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
+	@Override
+	public String toString() {
+		return "Professor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", department="
+				+ department + ", professorId=" + professorId + ", joiningDate=" + joiningDate + "]";
+	}
+	
 }

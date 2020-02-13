@@ -1,45 +1,69 @@
 package com.csye6225.spring2020.courseservice.service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
+import com.csye6225.spring2020.courseservice.datamodel.Professor;
+import com.csye6225.spring2020.courseservice.datamodel.Program;
 import com.csye6225.spring2020.courseservice.datamodel.Student;
 
 public class StudentsService {
-	private Map<String,Student> studentMap;
+	private static HashMap<String, Student> stud_Map = InMemoryDatabase.getStudentsDB();
+    private static Map<String, Course> courseMap = InMemoryDatabase.getCoursesDB();
+    private static Map<String, Program> programMap = InMemoryDatabase.getProgramsDB();
 	public StudentsService() {
-		studentMap=new HashMap<>();
+		
 	}
 	public Student addStudent(Student student) {
-		studentMap.put(student.getStudentId(),student);
+		String id= String.valueOf(InMemoryDatabase.getNextStudentId());
+		student.setId(id);
+		student.setStudentId(student.getFirstName()+student.getLastName());
+		student.setJoiningDate(new Date().toString());
+		stud_Map.put(id,student);
 		return student;
 	}
-	public Student getStudent(String studentId) {
-		return studentMap.get(studentId);
+	public List<Student> getAllStudent() {
+		ArrayList<Student> allStudents=new ArrayList<>();
+		for(Student std:stud_Map.values()) {
+			allStudents.add(std);
+		}
+		return allStudents;
 	}
-	public Student updateStudent(String studentId, Student student) {
+	public Student getStudent(String id) {
+		Student std=stud_Map.get(id);
+		System.out.println("Item retrieved:");
+		if(std != null) 
+			System.out.println(std.toString());
+		return std;
+	}
+	public Student updateStudent(String id, Student student) {
 		//TODO map to database
-		Student oldStudent = studentMap.get(studentId);
-		if(oldStudent == null || !verifyStudent(student)) {
+		Student oldStudent = stud_Map.get(id);
+		if(oldStudent == null ) {
 			return null;
 		}
-		student.setId(oldStudent.getId());
-		student.setStudentId(oldStudent.getStudentId());
+		String studentId = oldStudent.getId();
+		student.setId(studentId);
 		//TODO map to database
-		studentMap.put(studentId, student);
-		
-		return getStudent(studentId);
+		stud_Map.put(id, student);
+		return getStudent(id);
 	}
 	
-	public Student deleteStudent(String studentId) {
-		final Student oldStudent=getStudent(studentId);
+	public Student deleteStudent(String id) {
+		final Student oldStudent=getStudent(id);
 		if(oldStudent == null)
 			return null;
+		stud_Map.remove(id);
 		return oldStudent;
 	}
 	
-	private boolean verifyStudent(final Student student)
+	private boolean verifyStudent(Student student)
     {
         student.setId(null);
         if (student.getCoursesEnrolled() != null && student.getCoursesEnrolled().isEmpty())

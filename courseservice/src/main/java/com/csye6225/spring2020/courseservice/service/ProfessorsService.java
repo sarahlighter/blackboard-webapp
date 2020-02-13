@@ -15,7 +15,7 @@ import com.csye6225.spring2020.courseservice.datamodel.Professor;
 
 public class ProfessorsService {
 	
-	static HashMap<Long, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
+	private static HashMap<String, Professor> prof_Map = InMemoryDatabase.getProfessorDB();
 	
 	public ProfessorsService() {
 	}
@@ -35,23 +35,23 @@ public class ProfessorsService {
 	public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
 		// Next Id 
 		long nextAvailableId = InMemoryDatabase.getNextProfessorId();
-		
+		String id=String.valueOf(nextAvailableId);
 		//Create a Professor Object
 		Professor prof = new Professor(firstName+lastName, firstName , lastName, 
 				department, joiningDate.toString());
-		prof.setId(String.valueOf(nextAvailableId));
-		prof_Map.put(nextAvailableId, prof);
+		prof.setId(id);
+		prof_Map.put(id, prof);
 	}
 	
 	public Professor addProfessor(Professor prof) {
 		long nextAvailableId = InMemoryDatabase.getNextProfessorId();
-		prof.setId(String.valueOf(nextAvailableId));
-		prof_Map.put(nextAvailableId, prof);
+		String id=String.valueOf(nextAvailableId);
+		prof.setId(id);
+		prof_Map.put(id, prof);
 		return prof;
 	}
 	// Getting One Professor
-	public Professor getProfessor(long profId) {
-		
+	public Professor getProfessor(String profId) {
 		 //Simple HashKey Load
 		 Professor prof2 = prof_Map.get(profId);
 	     System.out.println("Item retrieved:");
@@ -61,14 +61,14 @@ public class ProfessorsService {
 	}
 	
 	// Deleting a professor
-	public Professor deleteProfessor(Long profId) {
+	public Professor deleteProfessor(String profId) {
 		Professor deletedProfDetails = prof_Map.get(profId);
 		prof_Map.remove(profId);
 		return deletedProfDetails;
 	}
 	
 	// Updating Professor Info
-	public Professor updateProfessorInformation(long profId, Professor prof) {	
+	public Professor updateProfessorInformation(String profId, Professor prof) {	
 		Professor oldProfObject = prof_Map.get(profId);
 		if (oldProfObject == null)
         {
