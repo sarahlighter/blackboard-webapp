@@ -4,26 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.csye6225.spring2020.courseservice.datamodel.Course;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
-import com.csye6225.spring2020.courseservice.datamodel.Professor;
-import com.csye6225.spring2020.courseservice.datamodel.Program;
 import com.csye6225.spring2020.courseservice.datamodel.Student;
 
 public class StudentsService {
 	private static HashMap<String, Student> stud_Map = InMemoryDatabase.getStudentsDB();
-    private static Map<String, Course> courseMap = InMemoryDatabase.getCoursesDB();
-    private static Map<String, Program> programMap = InMemoryDatabase.getProgramsDB();
+
 	public StudentsService() {
 		
 	}
 	public Student addStudent(Student student) {
 		String id= String.valueOf(InMemoryDatabase.getNextStudentId());
-		student.setId(id);
-		student.setStudentId(student.getFirstName()+student.getLastName());
+		student.setStudentId(id);
+//		student.setStudentId(student.getFirstName()+student.getLastName());
 		student.setJoiningDate(new Date().toString());
 		stud_Map.put(id,student);
 		return student;
@@ -37,9 +31,8 @@ public class StudentsService {
 	}
 	public Student getStudent(String id) {
 		Student std=stud_Map.get(id);
-		System.out.println("Item retrieved:");
-		if(std != null) 
-			System.out.println(std.toString());
+		if(std == null) 
+			return null;
 		return std;
 	}
 	public Student updateStudent(String id, Student student) {
@@ -48,8 +41,8 @@ public class StudentsService {
 		if(oldStudent == null ) {
 			return null;
 		}
-		String studentId = oldStudent.getId();
-		student.setId(studentId);
+		String studentId = oldStudent.getStudentId();
+		student.setStudentId(studentId);
 		//TODO map to database
 		stud_Map.put(id, student);
 		return getStudent(id);
@@ -63,28 +56,10 @@ public class StudentsService {
 		return oldStudent;
 	}
 	
-	private boolean verifyStudent(Student student)
-    {
-        student.setId(null);
-        if (student.getCoursesEnrolled() != null && student.getCoursesEnrolled().isEmpty())
-        {
-            student.setCoursesEnrolled(null);
-        }
-        else if (student.getCoursesEnrolled() != null && student.getCoursesEnrolled().size() > 3)
-        {
-            return false;
-        }
-
-        if (student.getStudentId() != null && student.getStudentId().isEmpty())
-        {
-            return false;
-        }
-        
-        //TODO check existCourses
-//        final Set<String> registeredCourses = student.getCoursesEnrolled();
-//        if (registeredCourses != null && !registeredCourses.isEmpty() && existedCourses(registeredCourses).size() != registeredCourses.size()){
-//            return false;
-//        }
-        return true;
-    }
+	public boolean isValid(Student std) {
+		if(!new ProgramsService().isExist(std.getProgramId())) {
+			return false;
+		}
+		return true;
+	}
 }

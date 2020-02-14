@@ -36,17 +36,16 @@ public class ProfessorsResource {
 
 	// ... webapi/professor/1 
 	@GET
-	@Path("/{id}")
+	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Professor getProfessor(@PathParam("id") String profId) {
-		System.out.println("Professor Resource: Looking for: " + profId);
+	public Professor getProfessor(@PathParam("professorId") String profId) {
 		return profService.getProfessor(profId);
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Professor deleteProfessor(@PathParam("id") String profId) {
+	public Professor deleteProfessor(@PathParam("professorId") String profId) {
 		return profService.deleteProfessor(profId);
 	}
 
@@ -54,20 +53,18 @@ public class ProfessorsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Professor addProfessor(Professor prof) {
-		if (prof == null)
-		{
+		if (prof == null){
+			System.out.println("INVALID INPUT");
 			return null;
 		}
-		prof.setProfessorId(prof.getFirstName()+prof.getLastName());
-		prof.setJoiningDate(new Date().toString());
 		return profService.addProfessor(prof);
 	}
 
 	@PUT
-	@Path("/{id}")
+	@Path("/{professorId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Professor updateProfessor(@PathParam("id") String profId, 
+	public Professor updateProfessor(@PathParam("professorId") String profId, 
 			Professor prof) {
 		return profService.updateProfessorInformation(profId, prof);
 	}

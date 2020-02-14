@@ -27,10 +27,9 @@ public class LecturesResource {
 	}
 
 	@GET
-	@Path("/{id}")
+	@Path("/{lectureId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Lecture getLecture(@PathParam("id") String lectId) {
-		System.out.println("Lecture Resource: Looking for: "+ lectId);
+	public Lecture getLecture(@PathParam("lectureId") String lectId) {
 		return lectService.getLecture(lectId);
 	}
 
@@ -39,23 +38,24 @@ public class LecturesResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Lecture addLecture(Lecture lect) {
 		if(lect == null) {
+			System.out.println("INVALID INPUT");
 			return null;
 		}
 		return lectService.addLecture(lect);
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{lectureId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Lecture deleteLecture(@PathParam("id") String lectId) {
+	public Lecture deleteLecture(@PathParam("lectureId") String lectId) {
 		return lectService.deleteLecture(lectId);
 	}
 
 	@PUT
-	@Path("/{id}")
+	@Path("/{lectureId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Lecture updateLecture(@PathParam("id") String lectId, Lecture lect) {
+	public Lecture updateLecture(@PathParam("lectureId") String lectId, Lecture lect) {
 		return lectService.updateLecture(lectId,lect);
 
 	}

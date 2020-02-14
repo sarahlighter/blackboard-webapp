@@ -8,9 +8,10 @@ public class Course {
 	private String professorId;
 	private String taId;
 	private String department;
-	private String boardId;
 	private Set<String> roster;
-	private String programName;
+	private String programId;
+	
+	public Course() {}
 	
 	public String getCourseId() {
 		return courseId;
@@ -36,17 +37,18 @@ public class Course {
 	public void setTaId(String taId) {
 		this.taId = taId;
 	}
+	
 	public String getDepartment() {
 		return department;
 	}
-	public void setDepartment(String department) {
+	public void setDepartmentId(String department) {
 		this.department = department;
 	}
-	public String getBoardId() {
-		return boardId;
+	public String getProgramId() {
+		return programId;
 	}
-	public void setBoardId(String boardId) {
-		this.boardId = boardId;
+	public void setProgramId(String programId) {
+		this.programId = programId;
 	}
 	public Set<String> getRoster() {
 		return roster;
@@ -54,17 +56,11 @@ public class Course {
 	public void setRoster(Set<String> roster) {
 		this.roster = roster;
 	}
-	public String getProgramName() {
-		return programName;
-	}
 	@Override
 	public String toString() {
 		return "Course [courseId=" + courseId + ", courseName=" + courseName + ", professorId=" + professorId
-				+ ", taId=" + taId + ", department=" + department + ", boardId=" + boardId + ", roster=" + roster
-				+ ", programName=" + programName + "]";
-	}
-	public void setProgramName(String programName) {
-		this.programName = programName;
+				+ ", taId=" + taId + ", department=" + department + ", roster=" + roster
+				+ ", programId=" + programId + "]";
 	}
 	
 	

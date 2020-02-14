@@ -12,16 +12,13 @@ import java.util.Date;
 //import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
 public class Professor {
-	private String id;
 	private String professorId;
 	private String firstName;
 	private String lastName;
 	private String department;
 	private String joiningDate;
 
-	public Professor() {
-
-	}
+	public Professor() {}
 
 	public Professor(String professorId, String firstName, 
 			String lastName, String department, String joiningDate) {
@@ -61,12 +58,6 @@ public class Professor {
 		this.joiningDate = joiningDate;
 	}
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getLastName() {
 		return lastName;
@@ -77,7 +68,7 @@ public class Professor {
 
 	@Override
 	public String toString() {
-		return "Professor [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", department="
+		return "Professor [firstName=" + firstName + ", lastName=" + lastName + ", department="
 				+ department + ", professorId=" + professorId + ", joiningDate=" + joiningDate + "]";
 	}
 	

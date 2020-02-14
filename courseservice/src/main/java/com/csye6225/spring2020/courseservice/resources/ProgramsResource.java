@@ -26,36 +26,35 @@ public class ProgramsResource {
 	}
 
 	@GET
-	@Path("/{id}")
+	@Path("/{programId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Program getProgram(@PathParam("id") String pgmName) {
-		System.out.println("Program Resource: Looking for: "+ pgmName);
-		return pgmService.getProgram(pgmName);
+	public Program getProgram(@PathParam("programId") String pgmId) {
+		return pgmService.getProgram(pgmId);
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Program addProgram(Program lect) {
-		if(lect == null) {
+	public Program addProgram(Program prg) {
+		if(prg == null) {
+			System.out.println("INVALID INPUT");
 			return null;
 		}
-		return pgmService.addProgram(lect);
+		return pgmService.addProgram(prg);
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{programId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Program deleteProgram(@PathParam("id") String lectId) {
-		return pgmService.deleteProgram(lectId);
+	public Program deleteProgram(@PathParam("programId") String prgId) {
+		return pgmService.deleteProgram(prgId);
 	}
 
 	@PUT
-	@Path("/{id}")
+	@Path("/{programId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Program updateProgram(@PathParam("id") String lectId, Program lect) {
-		return pgmService.updateProgram(lectId,lect);
-
+	public Program updateProgram(@PathParam("programId") String prgId, Program prg) {
+		return pgmService.updateProgram(prgId,prg);
 	}
 }

@@ -1,7 +1,6 @@
 package com.csye6225.spring2020.courseservice.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,14 +38,17 @@ public class ProfessorsService {
 		//Create a Professor Object
 		Professor prof = new Professor(firstName+lastName, firstName , lastName, 
 				department, joiningDate.toString());
-		prof.setId(id);
+		prof.setProfessorId(id);
 		prof_Map.put(id, prof);
 	}
 	
 	public Professor addProfessor(Professor prof) {
 		long nextAvailableId = InMemoryDatabase.getNextProfessorId();
 		String id=String.valueOf(nextAvailableId);
-		prof.setId(id);
+//		prof.setId(id);
+//		String professorId=prof.getFirstName()+prof.getLastName();
+		prof.setProfessorId(id);
+		prof.setJoiningDate(new Date().toString());
 		prof_Map.put(id, prof);
 		return prof;
 	}
@@ -54,9 +56,6 @@ public class ProfessorsService {
 	public Professor getProfessor(String profId) {
 		 //Simple HashKey Load
 		 Professor prof2 = prof_Map.get(profId);
-	     System.out.println("Item retrieved:");
-	     System.out.println(prof2.toString());
-		
 		return prof2;
 	}
 	
@@ -90,6 +89,10 @@ public class ProfessorsService {
 			}
 		}
 		return list ;
+	}
+	
+	public boolean isExist(String profId) {
+		return prof_Map.containsKey(profId);
 	}
 
 	

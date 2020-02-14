@@ -19,14 +19,15 @@ public class ProgramsService {
 		}
 		return allPrograms;
 	}
- 	public Program getProgram(String ProgramName) {
-		Program program=pgm_Map .get(ProgramName);
-		System.out.println("Item retrieved:");
-		System.out.println(program.toString());
+ 	public Program getProgram(String ProgramId) {
+		Program program=pgm_Map.get(ProgramId);
 		return program;
 	}
 	public Program addProgram(Program pgm) {
-		pgm_Map .put(pgm.getProgramName(),pgm);
+		long nextAvailableId = InMemoryDatabase.getNextProgramId();
+		String id=String.valueOf(nextAvailableId);
+		pgm.setProgramId(id);
+		pgm_Map.put(id, pgm);
 		return pgm;
 	}
 
@@ -37,9 +38,13 @@ public class ProgramsService {
 	}
 
 	public Program updateProgram(String ProgramId, Program pgm) {
-		Program oldProgram=pgm_Map .get(ProgramId);
-		pgm.setProgramName(oldProgram.getProgramName());
+		Program oldProgram=pgm_Map.get(ProgramId);
+		pgm.setProgramId(oldProgram.getProgramId());
 		pgm_Map .put(ProgramId,pgm);
 		return pgm;
+	}
+	
+	public boolean isExist(String pgmId) {
+		return pgm_Map.containsKey(pgmId);
 	}
 }

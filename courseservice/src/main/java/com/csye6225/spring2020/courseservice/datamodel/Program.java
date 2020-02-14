@@ -3,31 +3,35 @@ package com.csye6225.spring2020.courseservice.datamodel;
 import java.util.Set;
 
 public class Program {
+	private String programId;
 	private String programName;
-	private Set<String> courses;  //course id
-	private Set<String> students; //student id
+	private String department;
 	
+	public Program() {}
+	
+	public String getProgramId() {
+		return programId;
+	}
+	public void setProgramId(String programId) {
+		this.programId = programId;
+	}
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
 	public String getProgramName() {
 		return programName;
 	}
 	public void setProgramName(String programName) {
 		this.programName = programName;
 	}
-	public Set<String> getCourses() {
-		return courses;
-	}
-	public void setCourses(Set<String> courses) {
-		this.courses = courses;
-	}
-	public Set<String> getStudents() {
-		return students;
-	}
-	public void setStudents(Set<String> students) {
-		this.students = students;
-	}
 	@Override
 	public String toString() {
-		return "Program [programName=" + programName + ", courses=" + courses + ", students=" + students + "]";
+		return "Program [programId=" + programId + ", programName=" + programName + ", department=" + department
+				+ "]";
 	}
+	
 	
 }

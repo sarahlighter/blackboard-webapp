@@ -6,6 +6,8 @@ public class Lecture {
 	private String material;
 	private String courseId;
 	
+	public Lecture() {}
+	
 	public String getLectureId() {
 		return lectureId;
 	}

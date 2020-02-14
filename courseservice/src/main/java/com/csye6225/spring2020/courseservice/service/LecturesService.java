@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.csye6225.spring2020.courseservice.datamodel.Course;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 import com.csye6225.spring2020.courseservice.datamodel.Lecture;
 
@@ -26,6 +27,10 @@ public class LecturesService {
 
 	
 	public Lecture addLecture(Lecture lect) {
+		if(!isValid(lect)) { 
+			System.out.println("Invalid Lecture object input");
+			return null;
+		}
 		long nextAvailableId = InMemoryDatabase.getNextLectureId();
 		String id=String.valueOf(nextAvailableId);
 		lect.setLectureId(id);
@@ -36,15 +41,20 @@ public class LecturesService {
 	// Getting One Lecture
 	public Lecture getLecture(String lectId) {
 		 //Simple HashKey Load
-		 Lecture lect2 = lect_Map.get(lectId);
-	     System.out.println("Item retrieved:");
-	     System.out.println(lect2.toString());
-		
+		if(!isExist(lectId)) {
+			System.out.println("THis lecture is not exist");
+			return null;
+		}
+		 Lecture lect2 = lect_Map.get(lectId);	
 		return lect2;
 	}
 	
 	// Deleting a Lecture
 	public Lecture deleteLecture(String lectId) {
+		if(!isExist(lectId)) {
+			System.out.println("THis lecture is not exist");
+			return null;
+		}
 		Lecture deletedlectDetails = lect_Map.get(lectId);
 		lect_Map.remove(lectId);
 		return deletedlectDetails;
@@ -53,8 +63,8 @@ public class LecturesService {
 	// Updating Lecture Info
 	public Lecture updateLecture(String lectId, Lecture lect) {	
 		Lecture oldlectObject = lect_Map.get(lectId);
-		if (oldlectObject == null)
-        {
+		if (oldlectObject == null || !isValid(lect)){
+			System.out.println("Not exist or Invalid lecture input");
             return null;
         }
 		String LectureId = oldlectObject.getLectureId();
@@ -63,6 +73,15 @@ public class LecturesService {
 		return lect;
 	}
 	
+	public boolean isExist(String lectId) {
+		return lect_Map.containsKey(lectId);
+	}
+	public boolean isValid(Lecture lect) {
+		if(!new CoursesService().isExist(lect.getCourseId())) {
+			return false;
+		}
+		return true;
+	}
 	
 
 }

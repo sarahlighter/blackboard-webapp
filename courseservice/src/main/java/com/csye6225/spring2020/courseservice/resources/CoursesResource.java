@@ -26,10 +26,9 @@ public class CoursesResource {
 	}
 	
 	@GET
-	@Path("/{id}")
+	@Path("/{courseId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Course getCourse(@PathParam("id") String courId) {
-		System.out.println("Course Resource: Looking for: "+ courId);
+	public Course getCourse(@PathParam("courseId") String courId) {
 		return courService.getCourse(courId);
 	}
 	
@@ -38,23 +37,24 @@ public class CoursesResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Course addCourse(Course cour) {
 		if(cour == null) {
+			System.out.println("INVALID INPUT");
 			return null;
 		}
 		return courService.addCourse(cour);
 	}
 	
 	@PUT
-	@Path("/{id}")
+	@Path("/{courseId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Course updateCourse(@PathParam("id") String courId, Course cour) {
+	public Course updateCourse(@PathParam("courseId") String courId, Course cour) {
 		return courService.updateCourse(courId, cour);
 	}
 	
 	@DELETE
-	@Path("/{id}")
+	@Path("/{courseId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Course deleteCourse(@PathParam("id") String courId) {
+	public Course deleteCourse(@PathParam("courseId") String courId) {
 		return courService.deleteCourse(courId);
 	}
 	

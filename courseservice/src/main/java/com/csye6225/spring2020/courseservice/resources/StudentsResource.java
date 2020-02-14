@@ -29,13 +29,12 @@ public class StudentsResource {
 	}
 
 	@GET
-	@Path("/{id}")
+	@Path("/{studentId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Student getStudent(@PathParam("id") String stdId) {
-		System.out.println("Student Resource: Looking for: "+ stdId);
+	public Student getStudent(@PathParam("studentId") String stdId) {
 		Student std=stdService.getStudent(stdId);
 		if(std == null) {
-			System.out.println("Cannot find this student!");
+			System.out.println("Cannot find student with studentId:"+stdId);
 		}
 		return std;
 	}
@@ -45,24 +44,24 @@ public class StudentsResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Student addStudent(Student std) {
 		if(std == null) {
+			System.out.println("INVALID INPUT");
 			return null;
 		}
 		return stdService.addStudent(std);
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/{studentId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Student deleteStudent(@PathParam("id") String stdId) {
+	public Student deleteStudent(@PathParam("studentId") String stdId) {
 		return stdService.deleteStudent(stdId);
 	}
 
 	@PUT
-	@Path("/{id}")
+	@Path("/{studentId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Student updateStudent(@PathParam("id") String stdId, Student std) {
-		
+	public Student updateStudent(@PathParam("studentId") String stdId, Student std) {	
 		return stdService.updateStudent(stdId, std);
 
 	}
