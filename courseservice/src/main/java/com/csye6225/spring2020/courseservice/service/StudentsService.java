@@ -29,6 +29,15 @@ public class StudentsService {
 		}
 		return allStudents;
 	}
+	public List<Student> getStudentsByProgram(String programId){
+		ArrayList<Student> students = new ArrayList<>();
+		for(Student std:stud_Map.values()) {
+			if(std.getProgramId().equals(programId)) {
+				students.add(std);
+			}
+		}
+		return students;
+	}
 	public Student getStudent(String id) {
 		Student std=stud_Map.get(id);
 		if(std == null) 

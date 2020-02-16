@@ -24,7 +24,10 @@ public class StudentsResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Student> getStudents(){
+	public List<Student> getStudents(@QueryParam("programId") String pgmId){
+		if(pgmId!=null) {
+			return stdService.getStudentsByProgram(pgmId);
+		}
 		return stdService.getAllStudent();
 	}
 

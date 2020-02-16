@@ -21,7 +21,10 @@ public class CoursesResource {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Course> getCourses(){
+	public List<Course> getCourses(@QueryParam("programId") String pgmId){
+		if(pgmId!=null) {
+			return courService.getCoursesByProgram(pgmId);
+		}
 		return courService.getAllCourses();
 	}
 	

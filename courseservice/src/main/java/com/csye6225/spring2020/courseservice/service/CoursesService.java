@@ -20,6 +20,14 @@ public class CoursesService {
 		}
 		return allCourses;
 	}
+	public List<Course> getCoursesByProgram(String programId){
+		ArrayList<Course> courses = new ArrayList<>();
+		for(Course c:cour_Map .values()) {
+			if(c.getProgramId().equals(programId))
+				courses.add(c);
+		}
+		return courses;
+	}
  	public Course getCourse(String courseId) {
  		if(!isExist(courseId)) {
  			return null;
@@ -46,6 +54,7 @@ public class CoursesService {
 
 	public Course updateCourse(String courseId, Course cor) {
 		if(!isValid(cor)) {
+			
 			return null;
 		}
 		Course oldCourse=cour_Map.get(courseId);

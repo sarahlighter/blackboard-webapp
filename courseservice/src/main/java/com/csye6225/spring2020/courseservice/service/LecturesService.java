@@ -24,6 +24,14 @@ public class LecturesService {
 		}
 		return list ;
 	}
+	public List<Lecture> getLecturesByCourse(String courseId){
+		ArrayList<Lecture> list = new ArrayList<>();
+		for (Lecture lect : lect_Map.values()) {
+			if(lect.getCourseId().equals(courseId))
+				list.add(lect);
+		}
+		return list ;
+	}
 
 	
 	public Lecture addLecture(Lecture lect) {
