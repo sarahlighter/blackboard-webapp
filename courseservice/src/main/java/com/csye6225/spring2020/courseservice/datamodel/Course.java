@@ -8,7 +8,6 @@ public class Course {
 	private String professorId;
 	private String taId;
 	private String department;
-	private Set<String> roster;
 	private String programId;
 	
 	public Course() {}
@@ -50,17 +49,11 @@ public class Course {
 	public void setProgramId(String programId) {
 		this.programId = programId;
 	}
-	public Set<String> getRoster() {
-		return roster;
-	}
-	public void setRoster(Set<String> roster) {
-		this.roster = roster;
-	}
+
 	@Override
 	public String toString() {
 		return "Course [courseId=" + courseId + ", courseName=" + courseName + ", professorId=" + professorId
-				+ ", taId=" + taId + ", department=" + department + ", roster=" + roster
-				+ ", programId=" + programId + "]";
+				+ ", taId=" + taId + ", department=" + department + ", programId=" + programId + "]";
 	}
 	
 	

@@ -5,21 +5,29 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.csye6225.spring2020.courseservice.datamodel.DynamoDBConnector;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 import com.csye6225.spring2020.courseservice.datamodel.Student;
 
 public class StudentsService {
 	private static HashMap<String, Student> stud_Map = InMemoryDatabase.getStudentsDB();
 
+	private DynamoDBMapper mapper;
+	private static AmazonDynamoDB client;
 	public StudentsService() {
-		
+		client=DynamoDBConnector.getClient(true);
+		mapper= new DynamoDBMapper(client);
 	}
 	public Student addStudent(Student student) {
-		String id= String.valueOf(InMemoryDatabase.getNextStudentId());
-		student.setStudentId(id);
-//		student.setStudentId(student.getFirstName()+student.getLastName());
+//		String id= String.valueOf(InMemoryDatabase.getNextStudentId());
+//		student.setStudentId(id);
+		
 		student.setJoiningDate(new Date().toString());
-		stud_Map.put(id,student);
+//		stud_Map.put(id,student);
+		mapper.save(student);
+		System.out.println("I am here");
 		return student;
 	}
 	public List<Student> getAllStudent() {
