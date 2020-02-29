@@ -28,7 +28,6 @@ public class DynamoDBConnector {
             credentialsProvider = new ProfileCredentialsProvider();
             credentialsProvider.getCredentials();
         }
-		System.out.println(credentialsProvider);
 		// to US West (Oregon)
 		publicBuilder = AmazonDynamoDBClientBuilder.standard()
 		            .withRegion(Regions.US_WEST_2)
@@ -38,9 +37,10 @@ public class DynamoDBConnector {
 	private static void createLocalClient() {
 		//local
 		localBuilder = AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(
-				new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-west-2"));
+				new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "local"));
 		
 		client = localBuilder.build();
+		
 	}
 	
 	public static AmazonDynamoDB getClient(boolean isPublic) {
