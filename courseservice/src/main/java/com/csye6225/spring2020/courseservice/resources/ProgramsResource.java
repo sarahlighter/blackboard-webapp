@@ -17,44 +17,44 @@ import com.csye6225.spring2020.courseservice.service.ProgramsService;
 
 @Path("programs")
 public class ProgramsResource {
-	ProgramsService pgmService = new ProgramsService();
+    ProgramsService pgmService = new ProgramsService();
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Program> getPrograms(){
-		return pgmService.getAllPrograms();
-	}
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Program> getPrograms() {
+        return pgmService.getAllPrograms();
+    }
 
-	@GET
-	@Path("/{programId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Program getProgram(@PathParam("programId") String pgmId) {
-		return pgmService.getProgram(pgmId);
-	}
+    @GET
+    @Path("/{programId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Program getProgram(@PathParam("programId") String pgmId) {
+        return pgmService.getProgram(pgmId);
+    }
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Program addProgram(Program prg) {
-		if(prg == null) {
-			System.out.println("INVALID INPUT");
-			return null;
-		}
-		return pgmService.addProgram(prg);
-	}
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Program addProgram(Program prg) {
+        if (prg == null) {
+            System.out.println("INVALID INPUT");
+            return null;
+        }
+        return pgmService.addProgram(prg);
+    }
 
-	@DELETE
-	@Path("/{programId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Program deleteProgram(@PathParam("programId") String prgId) {
-		return pgmService.deleteProgram(prgId);
-	}
+    @DELETE
+    @Path("/{programId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Program deleteProgram(@PathParam("programId") String prgId) {
+        return pgmService.deleteProgram(prgId);
+    }
 
-	@PUT
-	@Path("/{programId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Program updateProgram(@PathParam("programId") String prgId, Program prg) {
-		return pgmService.updateProgram(prgId,prg);
-	}
+    @PUT
+    @Path("/{programId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Program updateProgram(@PathParam("programId") String prgId, Program prg) {
+        return pgmService.updateProgram(prgId, prg);
+    }
 }

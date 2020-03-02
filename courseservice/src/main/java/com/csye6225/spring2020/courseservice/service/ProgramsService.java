@@ -4,47 +4,51 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.csye6225.spring2020.courseservice.datamodel.DynamoDBConnector;
 import com.csye6225.spring2020.courseservice.datamodel.Program;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 
 public class ProgramsService {
-	private static HashMap<String, Program> pgm_Map = InMemoryDatabase.getProgramsDB();
+    private static HashMap<String, Program> pgm_Map = InMemoryDatabase.getProgramsDB();
+    private DynamoDBMapper mapper;
+    private static AmazonDynamoDB client;
 
-	public ProgramsService() {}
+    public ProgramsService() {
+		client = DynamoDBConnector.getClient(false);
+		mapper = new DynamoDBMapper(client);
+    }
 
-	public List<Program> getAllPrograms(){
-		ArrayList<Program> allPrograms = new ArrayList<>();
-		for(Program p:pgm_Map .values()) {
-			allPrograms.add(p);
-		}
-		return allPrograms;
-	}
- 	public Program getProgram(String ProgramId) {
-		Program program=pgm_Map.get(ProgramId);
-		return program;
-	}
-	public Program addProgram(Program pgm) {
-		long nextAvailableId = InMemoryDatabase.getNextProgramId();
-		String id=String.valueOf(nextAvailableId);
-		pgm.setProgramId(id);
-		pgm_Map.put(id, pgm);
-		return pgm;
-	}
+    public List<Program> getAllPrograms() {
+        List<Program> allPrograms = mapper.scan(Program.class,new DynamoDBScanExpression());
+        return allPrograms;
+    }
 
-	public Program deleteProgram(String ProgramId) {
-		Program pgm=getProgram(ProgramId);
-		pgm_Map.remove(ProgramId);
-		return pgm;
-	}
+    public Program getProgram(String programId) {
+        Program program = mapper.load(Program.class, programId);
+        return program;
+    }
 
-	public Program updateProgram(String ProgramId, Program pgm) {
-		Program oldProgram=pgm_Map.get(ProgramId);
-		pgm.setProgramId(oldProgram.getProgramId());
-		pgm_Map .put(ProgramId,pgm);
-		return pgm;
-	}
-	
-	public boolean isExist(String pgmId) {
-		return pgm_Map.containsKey(pgmId);
-	}
+    public Program addProgram(Program pgm) {
+        mapper.save(pgm);
+        return pgm;
+    }
+
+    public Program deleteProgram(String programId) {
+        Program pgm = getProgram(programId);
+        mapper.delete(pgm);
+        return pgm;
+    }
+
+    public Program updateProgram(String programId, Program pgm) {
+        pgm.setProgramId(programId);
+        mapper.save(pgm);
+        return pgm;
+    }
+
+    public boolean isExist(String pgmId) {
+        return pgm_Map.containsKey(pgmId);
+    }
 }

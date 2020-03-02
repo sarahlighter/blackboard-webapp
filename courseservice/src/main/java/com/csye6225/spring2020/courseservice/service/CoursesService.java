@@ -1,74 +1,90 @@
 package com.csye6225.spring2020.courseservice.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.IDynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.csye6225.spring2020.courseservice.datamodel.Board;
 import com.csye6225.spring2020.courseservice.datamodel.Course;
+import com.csye6225.spring2020.courseservice.datamodel.DynamoDBConnector;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 
 public class CoursesService {
-	private static HashMap<String, Course> cour_Map = InMemoryDatabase.getCoursesDB();
-	
-	public CoursesService() {}
+    private static HashMap<String, Course> cour_Map = InMemoryDatabase.getCoursesDB();
+    private static AmazonDynamoDB client;
+    private DynamoDBMapper mapper;
 
-	public List<Course> getAllCourses(){
-		ArrayList<Course> allCourses = new ArrayList<>();
-		for(Course c:cour_Map .values()) {
-			allCourses.add(c);
-		}
-		return allCourses;
-	}
-	public List<Course> getCoursesByProgram(String programId){
-		ArrayList<Course> courses = new ArrayList<>();
-		for(Course c:cour_Map .values()) {
-			if(c.getProgramId().equals(programId))
-				courses.add(c);
-		}
-		return courses;
-	}
- 	public Course getCourse(String courseId) {
- 		if(!isExist(courseId)) {
- 			return null;
- 		}
-		Course cors=cour_Map.get(courseId);
-		return cors;
-	}
-	public Course addCourse(Course cor) {
-		if(isExist(cor.getCourseId())||!isValid(cor)) {
-			return null;
-		}
-		cour_Map.put(cor.getCourseId(),cor);
-		return cor;
-	}
+    public CoursesService() {
+        client = DynamoDBConnector.getClient(false);
+        mapper = new DynamoDBMapper(client);
+    }
 
-	public Course deleteCourse(String courseId) {
-		if(!isExist(courseId)) {
-			return null;
-		}
-		Course oldCourse=cour_Map.get(courseId);
-		cour_Map.remove(courseId);
-		return oldCourse;
-	}
+    public List<Course> getAllCourses() {
+        List<Course> allCourses = mapper.scan(Course.class, new DynamoDBScanExpression());
+        return allCourses;
+    }
 
-	public Course updateCourse(String courseId, Course cor) {
-		if(!isValid(cor)) {
-			
-			return null;
-		}
-		Course oldCourse=cour_Map.get(courseId);
-		cor.setCourseId(oldCourse.getCourseId());
-		cour_Map.put(courseId,cor);
-		return cor;
-	}
-	
-	public boolean isExist(String courseId) {
-		return cour_Map.containsKey(courseId);
-	}
-	public boolean isValid(Course cors) {
-		if(!new ProfessorsService().isExist(cors.getProfessorId())) return false;
-		if(!new ProgramsService().isExist(cors.getProgramId())) return false;
-		return true;
-	}
+    public List<Course> getCoursesByProgram(String programId) {
+        HashMap<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":value", new AttributeValue().withS(programId));
+        DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
+                .withIndexName("programId")
+                .withKeyConditionExpression("programId = :value")
+                .withExpressionAttributeNames(eav);
+        List<Course> courses = mapper.query(Course.class, queryExpression);
+        return courses;
+    }
+
+    public Course getCourse(String courseId) {
+        //TODO
+//        if (!isExist(courseId)) {
+//            return null;
+//        }
+        Course cors = mapper.load(Course.class, courseId);
+        return cors;
+    }
+
+    public Course addCourse(Course cor) {
+        //TODO
+//        if (isExist(cor.getCourseId()) || !isValid(cor)) {
+//            return null;
+//        }
+        mapper.save(cor);
+        return cor;
+    }
+
+    public Course deleteCourse(String courseId) {
+        //TODO
+//        if (!isExist(courseId)) {
+//            return null;
+//        }
+        Course oldCourse = getCourse(courseId);
+        mapper.delete(oldCourse);
+        return oldCourse;
+    }
+
+    public Course updateCourse(String courseId, Course cor) {
+        //TODO
+//        if (!isValid(cor)) {
+//            return null;
+//        }
+        Course oldCourse = getCourse(courseId);
+        cor.setCourseId(oldCourse.getCourseId());
+        mapper.save(cor);
+        return cor;
+    }
+
+    public boolean isExist(String courseId) {
+        return cour_Map.containsKey(courseId);
+    }
+
+    public boolean isValid(Course cors) {
+        if (!new ProfessorsService().isExist(cors.getProfessorId())) return false;
+        return new ProgramsService().isExist(cors.getProgramId());
+    }
 }
