@@ -25,27 +25,35 @@ public class ProfessorsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Professor> getProfessors(@QueryParam("department") String depart) {
-
-        if (depart == null) {
+    public List<Professor> getProfessors(@QueryParam("professorId") String profId, @QueryParam("department") String depart, @QueryParam("year") String year) {
+        if(profId !=null && depart==null && year==null){
+            return profService.getProfessorByProfessorId(profId);
+        }else if(depart!=null && year!=null){
+            return profService.getProfessorByDepartmentAndYear(depart,year);
+        }
+        else if(depart !=null && year == null){
+            return profService.getProfessorsByDepartment(depart);
+        }
+        else if(depart ==null && year !=null){
+            return profService.getProfessorByYear(year);
+        }
+        else{
             return profService.getAllProfessors();
         }
-        return profService.getProfessorsByDepartment(depart);
-
     }
 
     // ... webapi/professor/1
     @GET
-    @Path("/{professorId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Professor getProfessor(@PathParam("professorId") String profId) {
-        return profService.getProfessor(profId);
+    public Professor getProfessor(@PathParam("Id") String Id) {
+        return profService.getProfessor(Id);
     }
 
     @DELETE
-    @Path("/{professorId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Professor deleteProfessor(@PathParam("professorId") String profId) {
+    public Professor deleteProfessor(@PathParam("Id") String profId) {
         return profService.deleteProfessor(profId);
     }
 
@@ -61,15 +69,13 @@ public class ProfessorsResource {
     }
 
     @PUT
-    @Path("/{professorId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Professor updateProfessor(@PathParam("professorId") String profId,
+    public Professor updateProfessor(@PathParam("Id") String Id,
                                      Professor prof) {
-        return profService.updateProfessorInformation(profId, prof);
+        return profService.updateProfessorInformation(Id, prof);
     }
 
-    public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
-        profService.addProfessor(firstName, lastName, department, joiningDate);
-    }
+
 }

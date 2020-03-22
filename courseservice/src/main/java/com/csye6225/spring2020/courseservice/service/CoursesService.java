@@ -3,19 +3,15 @@ package com.csye6225.spring2020.courseservice.service;
 import java.util.*;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.IDynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.csye6225.spring2020.courseservice.datamodel.Board;
 import com.csye6225.spring2020.courseservice.datamodel.Course;
 import com.csye6225.spring2020.courseservice.datamodel.DynamoDBConnector;
-import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 
 public class CoursesService {
-    private static HashMap<String, Course> cour_Map = InMemoryDatabase.getCoursesDB();
+
     private static AmazonDynamoDB client;
     private DynamoDBMapper mapper;
 
@@ -33,9 +29,10 @@ public class CoursesService {
         HashMap<String, AttributeValue> eav = new HashMap<>();
         eav.put(":value", new AttributeValue().withS(programId));
         DynamoDBQueryExpression queryExpression = new DynamoDBQueryExpression()
-                .withIndexName("programId")
-                .withKeyConditionExpression("programId = :value")
-                .withExpressionAttributeNames(eav);
+                                                    .withIndexName("programId-index")
+                                                    .withConsistentRead(false)
+                                                    .withKeyConditionExpression("programId = :value")
+                                                    .withExpressionAttributeValues(eav);
         List<Course> courses = mapper.query(Course.class, queryExpression);
         return courses;
     }
@@ -79,12 +76,4 @@ public class CoursesService {
         return cor;
     }
 
-    public boolean isExist(String courseId) {
-        return cour_Map.containsKey(courseId);
-    }
-
-    public boolean isValid(Course cors) {
-        if (!new ProfessorsService().isExist(cors.getProfessorId())) return false;
-        return new ProgramsService().isExist(cors.getProgramId());
-    }
 }

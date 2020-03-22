@@ -22,18 +22,21 @@ public class BoardsResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Board> getBoards(@QueryParam("courseId") String corsId) {
-        if (corsId != null) {
+    public List<Board> getBoards(@QueryParam("boardId") String brdId, @QueryParam("courseId") String corsId) {
+        if(brdId!=null&& corsId==null){
+            return brdService.getBoardByBoardId(brdId);
+        }
+        if (corsId != null && brdId==null) {
             return brdService.getBoardsByCourse(corsId);
         }
         return brdService.getAllBoards();
     }
 
     @GET
-    @Path("/{boardId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Board getBoard(@PathParam("boardId") String brdId) {
-        return brdService.getBoard(brdId);
+    public Board getBoard(@PathParam("Id") String Id) {
+        return brdService.getBoardbyId(Id);
     }
 
     @POST
@@ -48,17 +51,17 @@ public class BoardsResource {
     }
 
     @DELETE
-    @Path("/{boardId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Board deleteBoard(@PathParam("boardId") String brdId) {
+    public Board deleteBoard(@PathParam("Id") String brdId) {
         return brdService.deleteBoard(brdId);
     }
 
     @PUT
-    @Path("/{boardId}")
+    @Path("/{Id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Board updateBoard(@PathParam("boardId") String brdId, Board brd) {
+    public Board updateBoard(@PathParam("Id") String brdId, Board brd) {
         return brdService.updateBoard(brdId, brd);
 
     }
