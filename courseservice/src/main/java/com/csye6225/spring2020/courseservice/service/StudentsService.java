@@ -1,5 +1,6 @@
 package com.csye6225.spring2020.courseservice.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,30 +10,27 @@ import java.util.Map;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.amazonaws.services.s3.internal.Constants;
+import com.csye6225.spring2020.courseservice.datamodel.Student;
 import com.csye6225.spring2020.courseservice.datamodel.DynamoDBConnector;
 import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
 import com.csye6225.spring2020.courseservice.datamodel.Student;
 
 public class StudentsService {
-    private static HashMap<String, Student> stud_Map = InMemoryDatabase.getStudentsDB();
     private DynamoDBMapper mapper;
     private static AmazonDynamoDB client;
 
     public StudentsService() {
-        client = DynamoDBConnector.getClient(false);
+        client = DynamoDBConnector.getClient(true);
         mapper = new DynamoDBMapper(client);
-    }
-
-    public Student addStudent(Student student) {
-        student.setJoiningDate(new Date().toString());
-        mapper.save(student);
-        return student;
     }
 
     public List<Student> getAllStudent() {
@@ -40,16 +38,10 @@ public class StudentsService {
     }
 
     public List<Student> getStudentsByProgram(String programId) {
-
-//		Map<String, AttributeValue> attributeValue = new HashMap<String, AttributeValue>();
-//		attributeValue.put(":value", new AttributeValue().withS(programId));
-//		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression().withFilterExpression("programId = :value").withExpressionAttributeValues(attributeValue);
-//		List<Student> students=mapper.scan(Student.class, scanExpression);
-
         HashMap<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
         eav.put(":v1", new AttributeValue().withS(programId));
         DynamoDBQueryExpression<Student> queryExpression = new DynamoDBQueryExpression()
-                .withIndexName("programId")
+                .withIndexName("programId-index")
                 .withConsistentRead(false)
                 .withKeyConditionExpression("programId = :v1")
                 .withExpressionAttributeValues(eav);
@@ -57,36 +49,67 @@ public class StudentsService {
         return students;
     }
 
-    public Student getStudent(String id) {
-        Student std = mapper.load(Student.class, id);
-        if (std == null)
+    public Student addStudent(Student std) {
+        //check if std is valid
+        //1. studentId should be unique
+        try {
+            DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+            HashMap<String, ExpectedAttributeValue> expected = new HashMap();
+            expected.put("studentId", new ExpectedAttributeValue().withExists(false));
+            saveExpression.setExpected(expected);
+            //Set joining date
+            std.setJoiningDate(getDate());
+            mapper.save(std, saveExpression);
+        } catch (ConditionalCheckFailedException e) {
+            //if student table doesn't contain this student, throw exception
+            System.out.println("This student is exist: Invalid student id:" + std.getStudentId());
             return null;
+        }
         return std;
     }
 
-    public Student updateStudent(String id, Student student) {
-        Student oldStudent = mapper.load(Student.class, id);
-        if (oldStudent == null) {
-            return null;
+    //Get student by studentId
+    public Student getStudent(String studentId) {
+        Student std = mapper.load(Student.class, studentId);
+        if (std == null) {
+            System.out.println("This student is not exist: Invalid id:" + studentId);
         }
-        String studentId = oldStudent.getStudentId();
-        student.setStudentId(studentId);
-        mapper.save(student);
-        return student;
+        return std;
     }
 
-    public Student deleteStudent(String id) {
-        final Student oldStudent = getStudent(id);
-        if (oldStudent == null)
-            return null;
-        mapper.delete(oldStudent);
-        return oldStudent;
+    // Deleting a Student
+    public Student deleteStudent(String Id) {
+        Student oldObject = getStudent(Id);
+        if (oldObject != null) {
+            mapper.delete(oldObject);
+        } else {
+            System.out.println("Delete Fail");
+        }
+        return oldObject;
     }
 
-    public boolean isValid(Student std) {
-        if (!new ProgramsService().isExist(std.getProgramId())) {
-            return false;
+    // Updating Student Info
+    public Student updateStudent(String Id, Student std) {
+        std.setStudentId(Id);
+        //check if student table contains this studentId before update
+        try {
+            DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+            HashMap<String, ExpectedAttributeValue> expected = new HashMap();
+            expected.put("studentId", new ExpectedAttributeValue(new AttributeValue(Id)));
+            saveExpression.setExpected(expected);
+            mapper.save(std, saveExpression);
+        } catch (ConditionalCheckFailedException e) {
+            //if student table doesn't contain this student,
+            System.out.println("This student is not exist: Invalid id:" + Id);
+            return null;
         }
-        return true;
+        return std;
+    }
+
+    private String getDate() {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        return date;
     }
 }

@@ -9,7 +9,8 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 
 public class DynamoDBConnector {
-    private static AmazonDynamoDB client;
+    private static AmazonDynamoDB publicClient;
+    private static AmazonDynamoDB localClient;
     private static AmazonDynamoDBClientBuilder publicBuilder;
     private static AmazonDynamoDBClientBuilder localBuilder;
 
@@ -27,10 +28,11 @@ public class DynamoDBConnector {
             credentialsProvider.getCredentials();
         }
         // to US West (Oregon)
-        publicBuilder = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.US_WEST_2)
-                .withCredentials(credentialsProvider);
-        client = publicBuilder.build();
+        publicBuilder = AmazonDynamoDBClientBuilder.standard();
+//                .withRegion(Regions.US_WEST_2)
+//                .withCredentials(credentialsProvider);
+        publicClient = publicBuilder.build();
+        System.out.println("public dynamodb created");
     }
 
     private static void createLocalClient() {
@@ -38,22 +40,22 @@ public class DynamoDBConnector {
         localBuilder = AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(
                 new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "local"));
 
-        client = localBuilder.build();
-
+        localClient = localBuilder.build();
+        System.out.println("local dynamodb created");
     }
 
     public static AmazonDynamoDB getClient(boolean isPublic) {
         if (isPublic) {
-            createPublicClient();
+            if(publicClient==null){
+                createPublicClient();
+            }
+            return publicClient;
         } else {
-            createLocalClient();
+            if(localClient == null){
+                createLocalClient();
+            }
+            return localClient;
         }
-        return client;
     }
-
-    public void shutdownClient() {
-        client.shutdown();
-    }
-
 
 }

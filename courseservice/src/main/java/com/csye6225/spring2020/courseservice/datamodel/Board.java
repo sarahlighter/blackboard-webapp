@@ -40,7 +40,7 @@ public class Board {
         this.postDate = postDate;
     }
 
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "courseId", attributeName = "courseId")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "courseId-index", attributeName = "courseId")
     public String getCourseId() {
         return courseId;
     }

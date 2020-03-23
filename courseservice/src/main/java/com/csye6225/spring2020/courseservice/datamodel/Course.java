@@ -63,7 +63,7 @@ public class Course {
         this.department = department;
     }
 
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "programId", attributeName = "programId")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "programId-index", attributeName = "programId")
     public String getProgramId() {
         return programId;
     }

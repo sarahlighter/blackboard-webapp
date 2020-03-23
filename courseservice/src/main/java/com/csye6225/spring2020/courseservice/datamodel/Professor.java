@@ -39,7 +39,7 @@ public class Professor {
         this.firstName = firstName;
     }
 
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "department", attributeName = "department")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "department-index", attributeName = "department")
     public String getDepartment() {
         return department;
     }

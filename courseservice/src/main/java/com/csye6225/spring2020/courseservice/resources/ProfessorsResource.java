@@ -66,10 +66,7 @@ public class ProfessorsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Professor updateProfessor(@PathParam("professorId") String profId,
                                      Professor prof) {
-        return profService.updateProfessorInformation(profId, prof);
+        return profService.updateProfessor(profId,prof);
     }
 
-    public void addProfessor(String firstName, String lastName, String department, Date joiningDate) {
-        profService.addProfessor(firstName, lastName, department, joiningDate);
-    }
 }

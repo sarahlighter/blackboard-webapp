@@ -23,7 +23,7 @@ public class Program {
         this.programId = programId;
     }
 
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "department", attributeName = "department")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "department-index", attributeName = "department")
     public String getDepartment() {
         return department;
     }
