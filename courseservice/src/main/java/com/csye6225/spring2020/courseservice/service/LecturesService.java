@@ -4,91 +4,90 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.csye6225.spring2020.courseservice.datamodel.Course;
-import com.csye6225.spring2020.courseservice.datamodel.InMemoryDatabase;
-import com.csye6225.spring2020.courseservice.datamodel.Lecture;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
+import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
+import com.csye6225.spring2020.courseservice.datamodel.*;
 
 public class LecturesService {
-	private static HashMap<String, Lecture> lect_Map = new HashMap<>();
-	
+	private static AmazonDynamoDB client;
+	private DynamoDBMapper mapper;
 	public LecturesService() {
+		client = DynamoDBConnector.getClient(true);
+		mapper=new DynamoDBMapper(client);
 	}
-	
-	// Getting a list of all Lecture 
-	// GET "..webapi/Lectures"
+
 	public List<Lecture> getAllLectures() {	
-		//Getting the list
-		ArrayList<Lecture> list = new ArrayList<>();
-		for (Lecture lect : lect_Map.values()) {
-			list.add(lect);
-		}
+		List<Lecture> list = mapper.scan(Lecture.class,new DynamoDBScanExpression());
 		return list ;
 	}
 	public List<Lecture> getLecturesByCourse(String courseId){
-		ArrayList<Lecture> list = new ArrayList<>();
-		for (Lecture lect : lect_Map.values()) {
-			if(lect.getCourseId().equals(courseId))
-				list.add(lect);
-		}
+		HashMap<String, AttributeValue> eav = new HashMap<>();
+		eav.put(":val1",new AttributeValue().withS(courseId));
+		DynamoDBQueryExpression<Lecture> queryExpression = new DynamoDBQueryExpression()
+				.withIndexName("courseId-index")
+				.withKeyConditionExpression("courseId = :val1")
+				.withExpressionAttributeValues(eav)
+				.withConsistentRead(false);
+		List<Lecture> list = mapper.query(Lecture.class, queryExpression);
 		return list ;
 	}
 
-	
+
 	public Lecture addLecture(Lecture lect) {
-		if(!isValid(lect)) { 
-			System.out.println("Invalid Lecture object input");
+		//check if lect is valid
+		//1. lectureId should be unique
+		try {
+			DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+			HashMap<String, ExpectedAttributeValue> expected = new HashMap();
+			expected.put("lectureId", new ExpectedAttributeValue().withExists(false));
+			saveExpression.setExpected(expected);
+			mapper.save(lect, saveExpression);
+		} catch (ConditionalCheckFailedException e) {
+			//if lecture table doesn't contain this lecture, throw exception
+			System.out.println("This lecture is exist: Invalid lecture id:" + lect.getLectureId());
 			return null;
 		}
-		long nextAvailableId = InMemoryDatabase.getNextLectureId();
-		String id=String.valueOf(nextAvailableId);
-		lect.setLectureId(id);
-		lect_Map.put(id, lect);
 		return lect;
 	}
-	
-	// Getting One Lecture
-	public Lecture getLecture(String lectId) {
-		 //Simple HashKey Load
-		if(!isExist(lectId)) {
-			System.out.println("THis lecture is not exist");
-			return null;
+
+	//Get lecture by lectureId
+	public Lecture getLecture(String lectureId) {
+		Lecture lect = mapper.load(Lecture.class, lectureId);
+		if (lect == null) {
+			System.out.println("This lecture is not exist: Invalid id:" + lectureId);
 		}
-		 Lecture lect2 = lect_Map.get(lectId);	
-		return lect2;
+		return lect;
 	}
-	
+
 	// Deleting a Lecture
-	public Lecture deleteLecture(String lectId) {
-		if(!isExist(lectId)) {
-			System.out.println("THis lecture is not exist");
+	public Lecture deleteLecture(String Id) {
+		Lecture oldObject = getLecture(Id);
+		if (oldObject != null) {
+			mapper.delete(oldObject);
+		} else {
+			System.out.println("Delete Fail");
+		}
+		return oldObject;
+	}
+
+	// Updating Lecture Info
+	public Lecture updateLecture(String Id, Lecture lect) {
+		lect.setLectureId(Id);
+		//check if lecture table contains this lectureId before update
+		try {
+			DynamoDBSaveExpression saveExpression = new DynamoDBSaveExpression();
+			HashMap<String, ExpectedAttributeValue> expected = new HashMap();
+			expected.put("lectureId", new ExpectedAttributeValue(new AttributeValue(Id)));
+			saveExpression.setExpected(expected);
+			mapper.save(lect, saveExpression);
+		} catch (ConditionalCheckFailedException e) {
+			//if lecture table doesn't contain this lecture,
+			System.out.println("This lecture is not exist: Invalid id:" + Id);
 			return null;
 		}
-		Lecture deletedlectDetails = lect_Map.get(lectId);
-		lect_Map.remove(lectId);
-		return deletedlectDetails;
-	}
-	
-	// Updating Lecture Info
-	public Lecture updateLecture(String lectId, Lecture lect) {	
-		Lecture oldlectObject = lect_Map.get(lectId);
-		if (oldlectObject == null || !isValid(lect)){
-			System.out.println("Not exist or Invalid lecture input");
-            return null;
-        }
-		String LectureId = oldlectObject.getLectureId();
-		lect.setLectureId(LectureId);
-		lect_Map.put(lectId, lect);
 		return lect;
 	}
-	
-	public boolean isExist(String lectId) {
-		return lect_Map.containsKey(lectId);
-	}
-	public boolean isValid(Lecture lect) {
-		if(!new CoursesService().isExist(lect.getCourseId())) {
-			return false;
-		}
-		return true;
-	}
-	
 }

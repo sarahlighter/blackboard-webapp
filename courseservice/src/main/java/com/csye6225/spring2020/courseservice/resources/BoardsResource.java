@@ -18,48 +18,48 @@ import com.csye6225.spring2020.courseservice.service.BoardsService;
 
 @Path("boards")
 public class BoardsResource {
-	BoardsService brdService = new BoardsService();
+    BoardsService brdService = new BoardsService();
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Board> getBoards(@QueryParam("courseId") String corsId){
-		if(corsId!=null) {
-			return brdService.getBoardsByCourse(corsId);
-		}
-		return brdService.getAllBoards();
-	}
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Board> getBoards(@QueryParam("courseId") String corsId) {
+        if (corsId != null) {
+            return brdService.getBoardsByCourse(corsId);
+        }
+        return brdService.getAllBoards();
+    }
 
-	@GET
-	@Path("/{boardId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Board getBoard(@PathParam("boardId") String brdId) {
-		return brdService.getBoard(brdId);
-	}
+    @GET
+    @Path("/{boardId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Board getBoard(@PathParam("boardId") String brdId) {
+        return brdService.getBoard(brdId);
+    }
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Board addBoard(Board brd) {
-		if(brd == null) {
-			System.out.println("INVALID INPUT");
-			return null;
-		}
-		return brdService.addBoard(brd);
-	}
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Board addBoard(Board brd) {
+        if (brd == null) {
+            System.out.println("INVALID INPUT");
+            return null;
+        }
+        return brdService.addBoard(brd);
+    }
 
-	@DELETE
-	@Path("/{boardId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Board deleteBoard(@PathParam("boardId") String brdId) {
-		return brdService.deleteBoard(brdId);
-	}
+    @DELETE
+    @Path("/{boardId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Board deleteBoard(@PathParam("boardId") String brdId) {
+        return brdService.deleteBoard(brdId);
+    }
 
-	@PUT
-	@Path("/{boardId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Board updateBoard(@PathParam("boardId") String brdId, Board brd) {
-		return brdService.updateBoard(brdId,brd);
+    @PUT
+    @Path("/{boardId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Board updateBoard(@PathParam("boardId") String brdId, Board brd) {
+        return brdService.updateBoard(brdId, brd);
 
-	}
+    }
 }
