@@ -1,0 +1,111 @@
+{
+  "Comment": "Course workflow",
+  "StartAt": "Pass",
+  "States": {
+    "Pass": {
+      "Comment": "A Pass state passes its input to its output, without performing work. Pass states are useful when constructing and debugging state machines.",
+      "Type": "Pass",
+      "Next": "isNewCourse?"
+    },
+    "isNewCourse?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "And": [
+            {
+              "Variable": "$.boardId",
+              "StringEquals": ""
+            },
+            {
+              "Variable": "$.roster",
+              "StringEquals": ""
+            },
+            {
+              "Variable": "$.notificationTopic",
+              "StringEquals": ""
+            }
+          ],
+          "Next": "isSeminars?"
+        }
+      ],
+      "Default": "NotNewCourse"
+    },
+    "isSeminars?": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.department",
+          "StringEquals": "Seminars",
+          "Next": "isSeminar"
+        }
+      ],
+      "Default": "NotSeminar"
+    },
+    "NotSeminar": {
+      "Type": "Pass",
+      "Next": "createRegistrarObjectLambda"
+    },
+    "createRegistrarObjectLambda": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:RegistrarCreation",
+      "Next": "createBoardObjectLambda"
+    },
+    "createBoardObjectLambda": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:BoardCreation",
+      "Next": "isProfessorIdExist"
+    },
+    "isProfessorIdExist": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.professorId",
+          "StringGreaterThan": "",
+          "Next": "subscribeToCourseService"
+        }
+      ],
+      "Default": "professorIdNotExist"
+    },
+    "subscribeToCourseService": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:subscribeToCourseService",
+      "Parameters": {
+        "Message": "Subscribe to this topic",
+        "TopicArn": "$.notificationTopic"
+      },
+      "Next": "updateCourse"
+    },
+    "updateCourse": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:CourseUpdate",
+      "Next": "SendNotification"
+    },
+    "SendNotification": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:sendRegisteredMessage",
+      "Parameters": {
+        "Message": "Send Notification to subscribers",
+        "TopicArn": "$.notificationTopic"
+      },
+      "Next": "FinalState"
+    },
+    "professorIdNotExist": {
+      "Type": "Fail",
+      "Cause": "ProfessorId is empty."
+    },
+    "NotNewCourse": {
+      "Type": "Fail",
+      "Cause": "This is not a new course."
+    },
+    "isSeminar": {
+      "Type": "Pass",
+      "Result": "Seminar doesn't need board or notification.",
+      "End": true
+    },
+    "FinalState": {
+      "Type": "Pass",
+      "Result": "This is the final state",
+      "End": true
+    }
+  }
+}
