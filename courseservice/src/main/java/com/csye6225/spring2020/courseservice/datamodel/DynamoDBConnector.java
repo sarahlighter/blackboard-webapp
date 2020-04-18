@@ -28,9 +28,9 @@ public class DynamoDBConnector {
             credentialsProvider.getCredentials();
         }
         // to US West (Oregon)
-        publicBuilder = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.US_WEST_2)
-                .withCredentials(credentialsProvider);
+        publicBuilder = AmazonDynamoDBClientBuilder.standard();
+//                .withRegion(Regions.US_WEST_2)
+//                .withCredentials(credentialsProvider);
         publicClient = publicBuilder.build();
         System.out.println("public dynamodb created");
     }
