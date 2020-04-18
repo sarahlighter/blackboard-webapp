@@ -48,11 +48,19 @@
     "createRegistrarObjectLambda": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-west-2:556058823566:function:RegistrarCreation",
+      "ResultPath": null,
       "Next": "createBoardObjectLambda"
     },
     "createBoardObjectLambda": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-west-2:556058823566:function:BoardCreation",
+      "ResultPath": "$.boardId",
+      "Next": "CreateCourseNoticationTopic"
+    },
+    "CreateCourseNoticationTopic": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:556058823566:function:CreateCourseNoticationTopic",
+      "ResultPath": "$.notificationTopic",
       "Next": "isProfessorIdExist"
     },
     "isProfessorIdExist": {
@@ -70,23 +78,20 @@
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-west-2:556058823566:function:subscribeToCourseService",
       "Parameters": {
-        "Message": "Subscribe to this topic",
         "TopicArn": "$.notificationTopic"
       },
+       "ResultPath": null,
       "Next": "updateCourse"
     },
     "updateCourse": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-west-2:556058823566:function:CourseUpdate",
+      "ResultPath": null,
       "Next": "SendNotification"
     },
     "SendNotification": {
       "Type": "Task",
       "Resource": "arn:aws:lambda:us-west-2:556058823566:function:sendRegisteredMessage",
-      "Parameters": {
-        "Message": "Send Notification to subscribers",
-        "TopicArn": "$.notificationTopic"
-      },
       "Next": "FinalState"
     },
     "professorIdNotExist": {
